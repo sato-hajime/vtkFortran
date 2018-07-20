@@ -18,6 +18,7 @@ set(vtkSrc
   vtkDataSetAttributes.F90
   vtkDoubleArray.F90
   vtkFieldData.F90
+  vtkIdTypeArray.F90
   vtkIntArray.F90
   vtkObject.F90
   vtkObjectBase.F90
@@ -36,6 +37,7 @@ set(vtkSrc
   vtkDataSet_interface.cxx
   vtkDoubleArray_interface.cxx
   vtkFieldData_interface.cxx
+  vtkIdTypeArray_interface.cxx
   vtkIntArray_interface.cxx
   vtkObject_interface.cxx
   vtkObjectBase_interface.cxx
@@ -102,6 +104,7 @@ add_library(
   vtkAbstractArray_wrapper.F90
   vtkStringArray_wrapper.F90
   vtkDoubleArray_wrapper.F90
+  vtkIdTypeArray_wrapper.F90
   vtkIntArray_wrapper.F90
   )
 target_link_libraries(
