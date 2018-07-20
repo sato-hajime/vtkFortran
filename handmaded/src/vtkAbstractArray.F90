@@ -17,26 +17,18 @@ module m_vtkAbstractArray
 
   interface
 
-     subroutine vtkAbstractArray_SetName_c(array, name) &
-          bind(C, name="vtkAbstractArray_SetName")
-       import c_ptr
-       type(c_ptr),value :: array
-       type(c_ptr),value :: name
-     end subroutine vtkAbstractArray_SetName_c
-     
      function vtkAbstractArray_GetName_c(array) result(name) &
           bind(C, name="vtkAbstractArray_GetName")
-       import c_ptr, c_int
+       import c_ptr
        type(c_ptr),value :: array
        type(c_ptr)       :: name
      end function vtkAbstractArray_GetName_c
 
-     subroutine vtkAbstractArray_SetNumberOfValues(array, nValues) &
-          bind(C, name="vtkAbstractArray_SetNumberOfValues")
-       import c_ptr, c_int
-       type(c_ptr),value    :: array
-       integer(c_int),value :: nValues 
-     end subroutine vtkAbstractArray_SetNumberOfValues
+     subroutine vtkAbstractArray_SetName_c(array, name) &
+          bind(C, name="vtkAbstractArray_SetName")
+       import c_ptr
+       type(c_ptr),value :: array, name
+     end subroutine vtkAbstractArray_SetName_c
      
      function vtkAbstractArray_GetNumberOfValues(array) &
           result(nValues) bind(C, name="vtkAbstractArray_GetNumberOfValues")
@@ -45,12 +37,12 @@ module m_vtkAbstractArray
        integer(c_int)    :: nValues
      end function vtkAbstractArray_GetNumberOfValues
 
-     subroutine vtkAbstractArray_SetNumberOfTuples(array, nTuples) &
-          bind(C, name="vtkAbstractArray_SetNumberOfTuples")
+     subroutine vtkAbstractArray_SetNumberOfValues(array, nValues) &
+          bind(C, name="vtkAbstractArray_SetNumberOfValues")
        import c_ptr, c_int
        type(c_ptr),value    :: array
-       integer(c_int),value :: nTuples 
-     end subroutine vtkAbstractArray_SetNumberOfTuples
+       integer(c_int),value :: nValues
+     end subroutine vtkAbstractArray_SetNumberOfValues
      
      function vtkAbstractArray_GetNumberOfTuples(array) &
           result(nTuples) bind(C, name="vtkAbstractArray_GetNumberOfTuples")
@@ -59,12 +51,12 @@ module m_vtkAbstractArray
        integer(c_int)    :: nTuples
      end function vtkAbstractArray_GetNumberOfTuples
 
-     subroutine vtkAbstractArray_SetNumberOfComponents(array, nComponents) &
-          bind(C, name="vtkAbstractArray_SetNumberOfComponents")
+     subroutine vtkAbstractArray_SetNumberOfTuples(array, nTuples) &
+          bind(C, name="vtkAbstractArray_SetNumberOfTuples")
        import c_ptr, c_int
        type(c_ptr),value    :: array
-       integer(c_int),value :: nComponents
-     end subroutine vtkAbstractArray_SetNumberOfComponents
+       integer(c_int),value :: nTuples
+     end subroutine vtkAbstractArray_SetNumberOfTuples
      
      function vtkAbstractArray_GetNumberOfComponents(array) &
           result(nComponents) &
@@ -73,6 +65,13 @@ module m_vtkAbstractArray
        type(c_ptr),value :: array
        integer(c_int)    :: nComponents
      end function vtkAbstractArray_GetNumberOfComponents
+
+     subroutine vtkAbstractArray_SetNumberOfComponents(array, nComponents) &
+          bind(C, name="vtkAbstractArray_SetNumberOfComponents")
+       import c_ptr, c_int
+       type(c_ptr),value    :: array
+       integer(c_int),value :: nComponents
+     end subroutine vtkAbstractArray_SetNumberOfComponents
      
      function vtkAbstractArray_GetVoidPointer(array, valueIdx) result(ptr) &
           bind(C, name="vtkAbstractArray_GetVoidPointer")
@@ -86,19 +85,6 @@ module m_vtkAbstractArray
   
 contains
 
-  subroutine vtkAbstractArray_SetName(array, name)
-    implicit none
-    type(c_ptr),intent(in)         :: array
-    character(*,c_char),intent(in) :: name
-    call SetName_terminated(name//c_null_char)
-  contains
-    subroutine SetName_terminated(terminated)
-      character(*,c_char),intent(in) :: terminated
-      call vtkAbstractArray_SetName_c(array, f2c(terminated))
-    end subroutine SetName_terminated
-  end subroutine vtkAbstractArray_SetName
-
-  
   function vtkAbstractArray_GetName_explicit(array, length) result(name)
     implicit none
     type(c_ptr),intent(in)          :: array
@@ -116,5 +102,11 @@ contains
     name = c2f(vtkAbstractArray_GetName_c(array))
   end function vtkAbstractArray_GetName_allocatable
 #endif
+  
+  subroutine vtkAbstractArray_SetName(array, name)
+    type(c_ptr),intent(in)         :: array
+    character(*,c_char),intent(in) :: name
+    call vtkAbstractArray_SetName_c(array, f2c(name//c_null_char))
+  end subroutine vtkAbstractArray_SetName
   
 end module m_vtkAbstractArray
