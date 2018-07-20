@@ -1,0 +1,28 @@
+
+cmake_minimum_required(VERSION 2.8)
+
+enable_testing()
+
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
+enable_language(Fortran)
+set(CMAKE_Fortran_MODULE_DIRECTORY
+  ${CMAKE_CURRENT_BINARY_DIR}/modules)
+
+set(CMAKE_CXX_STANDARD 11)
+
+option(FORTRAN2003_CLASS OFF)
+
+if(FORTRAN2003_CLASS)
+  add_definitions(-DFORTRAN2003_CLASS)
+endif(FORTRAN2003_CLASS)
+
+option(FORTRAN2003_ALLOCATABLE_CHARACTER OFF)
+
+if(FORTRAN2003_ALLOCATABLE_CHARACTER)
+  add_definitions(-DFORTRAN2003_ALLOCATABLE_CHARACTER)
+endif(FORTRAN2003_ALLOCATABLE_CHARACTER)
+
+add_subdirectory(src)
+

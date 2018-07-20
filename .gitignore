@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# Backup files
+*~
+\#*
+
+# hidden files (except ".gitignore")
+.*
+!.gitignore
+
+# build directory
+*build*/
