@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="id-expression">
+    <Ref target="unqualified-id"/>
+    <!-- <Ref target="qualified-id"/> -->
+  </Or>
+
+  <Ref name="unqualified-id" target="identifier"/>
+  
+</parsers>

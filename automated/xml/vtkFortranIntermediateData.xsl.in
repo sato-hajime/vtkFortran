@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="2.0"
+		xmlns:xsl ="http://www.w3.org/1999/XSL/Transform"
+		xmlns:xs  ="http://www.w3.org/2001/XMLSchema"
+		xmlns:fn  ="http://www.w3.org/2005/xpath-functions"
+		xmlns:parser="https://github.com/sato-hajime/vtkFortran.git/parser"
+		xmlns:vtkf  ="https://github.com/sato-hajime/vtkFortran.git">
+
+  <xsl:output method="xml" indent="yes"/>
+  
+  <xsl:import href="parser.xsl"/>
+
+  <xsl:variable name="parsers">
+    <xsl:sequence>
+      <xsl:for-each select="document('parser-definition.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('lex.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('expr.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('dcl.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('dcl-decl.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('dcl-fct.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+      <xsl:for-each select="document('dcl-type.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+    </xsl:sequence>
+  </xsl:variable>
+  
+  <xsl:function name="parser:argsstring">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:sequence select="parser:parse(parser:getParser('argsstring'), $str)"/>
+  </xsl:function>
+
+  <xsl:function name="parser:type-spec">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:sequence select="parser:parse(parser:getParser('type-spec'), $str)"/>
+  </xsl:function>  
+  
+  <xsl:function name="vtkf:typeID">
+    <xsl:param name="type-spec" as="node()"/>
+
+    <xsl:sequence>
+      
+      <xsl:if test="$type-spec/*/Ref/*[@name='cv-qualifier']">
+	<xsl:value-of select="$type-spec/*/Ref/*[@name='cv-qualifier']"/>
+	<xsl:text>_</xsl:text>
+      </xsl:if>
+      <xsl:value-of select="$type-spec//*[@name='type-name']"/>
+
+      <xsl:for-each select="$type-spec/*/Ref/*[@name='ptr-ref-operator']">
+	<xsl:text>_</xsl:text>
+	<xsl:choose>
+	  <xsl:when test="./Ref/*[@name='pointer-operator']">
+	    <xsl:text>ptr</xsl:text>
+	  </xsl:when>
+	</xsl:choose>
+      </xsl:for-each>
+            
+    </xsl:sequence>
+      
+  </xsl:function>
+  
+  <xsl:function name="vtkf:isWrappableCompound"
+		as="xs:boolean">
+    <xsl:param name="compound" as="node()"/>
+    <xsl:value-of select="true()"/>
+    <!-- <xsl:value-of select="$compound/name/text() = 'vtkObjectBase'"/> -->
+  </xsl:function>
+
+  <xsl:template match="//compound[@kind='class' and vtkf:isWrappableCompound(.)]">
+    <xsl:message>
+      <xsl:value-of select="@kind"/>
+      <xsl:for-each select="(1 to 8 - string-length(@kind))">
+	<xsl:text> </xsl:text>
+      </xsl:for-each>
+      <xsl:text>: </xsl:text>
+      <xsl:value-of select="name"/>
+    </xsl:message>
+    
+    <xsl:variable name="doxygen" as="document-node()">
+      <xsl:sequence select="document(concat(@refid, '.xml'))"/>
+    </xsl:variable>
+    
+    <class>
+      <xsl:attribute name="name" select="name"/>
+      
+      <xsl:for-each select="$doxygen//memberdef[@kind='function' and @prot='public']">
+
+	<xsl:variable name="arg-toks">
+	  <xsl:sequence select="parser:argsstring(argsstring)"/>
+	</xsl:variable>
+
+	<xsl:variable name="type-toks">
+	  <xsl:sequence select="parser:type-spec(type)"/>
+	</xsl:variable>
+
+	<xsl:if test="string-length($arg-toks/rest) > 0">
+	  <xsl:message terminate="yes">
+	    <xsl:text>argsstring parse failed "</xsl:text>
+	    <xsl:value-of select="argsstring"/>
+	    <xsl:text>"</xsl:text>
+	  </xsl:message>
+	</xsl:if>
+
+	<xsl:if test="string-length($type-toks/rest) > 0">
+	  <xsl:message terminate="yes">
+	    <xsl:text>type parse failed "</xsl:text>
+	    <xsl:value-of select="argsstring"/>
+	    <xsl:text>"</xsl:text>
+	  </xsl:message>
+	</xsl:if>
+
+	<method>
+	  <xsl:attribute name="name">
+	    <xsl:value-of select="name"/>
+	  </xsl:attribute>
+	  <type>
+	    <xsl:sequence
+		select="vtkf:typeID($type-toks//*[@name='type-spec'])"/>
+	  </type>
+	  	  
+	  <xsl:message>
+	    <xsl:value-of select="parser:serializeToken($arg-toks/token)"/>
+	  </xsl:message>
+	  
+	  <!-- argument tokens -->
+	  <arguments>
+	    <xsl:for-each select="$arg-toks//*[@name='type-spec']">
+	      <argument>
+		<type>
+		  <xsl:sequence
+		      select="vtkf:typeID(.)"/>
+		</type>
+	      </argument>
+	    </xsl:for-each>
+	  </arguments>
+	  
+	  <xsl:message>
+	    <xsl:value-of select="argsstring"/>
+	  </xsl:message>
+	</method>
+      </xsl:for-each>
+    </class>
+    
+  </xsl:template>
+
+  
+  <!-- default guard -->
+  <xsl:template match="*">
+  </xsl:template>
+  
+  <xsl:template match="/">
+    <intermediateData>
+      <xsl:apply-templates select="//compound"/>
+    </intermediateData>
+  </xsl:template>
+  
+</xsl:stylesheet>

@@ -1,0 +1,507 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="2.0"
+		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		xmlns:xs ="http://www.w3.org/2001/XMLSchema"
+		xmlns:fn ="http://www.w3.org/2005/xpath-functions"
+		xmlns:vtkf  ="https://github.com/sato-hajime/vtkFortran.git"
+  		xmlns:parser="https://github.com/sato-hajime/vtkFortran.git/parser">
+
+  <xsl:variable name="parser:NDEBUG" as="xs:boolean">
+    <xsl:value-of select="false()"/>
+  </xsl:variable>
+  
+  <xsl:function name="parser:getParser">
+    <xsl:param name="name" as="xs:string"/>
+    <xsl:choose>
+      <xsl:when test="count($parsers//*[@name=$name]) = 0">
+	<xsl:message terminate="yes">
+	  <xsl:text>can't find parser definition "</xsl:text>
+	  <xsl:value-of select="$name"/>
+	  <xsl:text>"</xsl:text>	
+	</xsl:message>
+      </xsl:when>      
+      <xsl:when test="count($parsers//*[@name=$name]) > 1">
+     	<xsl:message terminate="yes">
+	  <xsl:text>ambiguous parser definition "</xsl:text>
+	  <xsl:value-of select="$name"/>
+	  <xsl:text>"</xsl:text>	
+	</xsl:message>
+      </xsl:when>
+    </xsl:choose>
+    <xsl:sequence select="$parsers//*[@name=$name]"/>
+  </xsl:function>
+  
+  <xsl:function name="parser:parse">
+    <xsl:param name="parserRoot" as="node()"/>
+    <xsl:param name="str" as="xs:string"/>
+
+    <xsl:if test="not($parser:NDEBUG)">
+      <xsl:message>
+	<xsl:text>parse '</xsl:text>
+	<xsl:value-of select="$str"/>
+	<xsl:text>' by : </xsl:text>
+	<xsl:value-of select="name($parserRoot)"/>
+	<xsl:if test="$parserRoot/@name">
+	  <xsl:text> = </xsl:text>
+	  <xsl:value-of select="$parserRoot/@name"/>
+	</xsl:if>
+      </xsl:message>
+    </xsl:if>
+      
+    <xsl:choose>
+      <xsl:when test="name($parserRoot) = 'Empty'">	
+	<xsl:sequence select="parser:parseEmpty($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'NoMatch'">	
+	<xsl:sequence select="parser:parseNoMatch($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'Literal'">
+	<xsl:sequence select="parser:parseLiteral($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'Optional'">
+	<xsl:sequence select="parser:parseOptional($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'Regex'">
+	<xsl:sequence select="parser:parseRegex($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'Or'">
+	<xsl:sequence select="parser:parseOr($parserRoot, $str)"/>	
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'And'">
+	<xsl:sequence select="parser:parseAnd($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'ZeroOrMore'">
+	<xsl:sequence select="parser:parseZeroOrMore($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:when test="name($parserRoot) = 'Ref'">
+	<xsl:sequence select="parser:parseRef($parserRoot, $str)"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:message>
+	  <xsl:text>unknown type </xsl:text>
+	  <xsl:value-of select="name($parserRoot)"/>
+	</xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+
+  <xsl:function name="parser:parseEmpty">
+    <xsl:param name="Empty" as="node()"   />
+    <xsl:param name="str"   as="xs:string"/>
+    
+    <rest>
+      <xsl:value-of select="$str"/>
+    </rest>
+    
+    <token>
+      <Empty>
+	<xsl:if test="$Empty/@name">
+	  <xsl:attribute name="name">
+	    <xsl:value-of select="$Empty/@name"/>
+	  </xsl:attribute>
+	</xsl:if>
+      </Empty>
+    </token>
+    
+  </xsl:function>
+  
+  <xsl:function name="parser:parseNoMatch">
+    <xsl:param name="NoMatch" as="node()"   />
+    <xsl:param name="str"     as="xs:string"/>
+    
+    <rest>
+      <xsl:value-of select="$str"/>
+    </rest>
+    
+    <token>
+      <NoMatch>
+	<xsl:if test="$NoMatch/@name">
+	  <xsl:attribute name="name">
+	    <xsl:value-of select="$NoMatch/@name"/>
+	  </xsl:attribute>
+	</xsl:if>
+      </NoMatch>
+    </token>
+
+  </xsl:function>
+  
+  <xsl:function name="parser:parseLiteral">
+    <xsl:param name="Literal" as="node()"/>
+    <xsl:param name="str"     as="xs:string"/>
+
+    <xsl:if test="not($parser:NDEBUG)">
+      <xsl:message>
+	<xsl:text>Literal '</xsl:text>
+	<xsl:value-of select="$Literal"/>
+	<xsl:text>' in '</xsl:text>
+	<xsl:value-of select="$str"/>
+	<xsl:text>' ?</xsl:text>
+      </xsl:message>
+    </xsl:if>
+      
+    <xsl:choose>
+      <xsl:when test="starts-with($str, $Literal)">
+	<rest>
+	  <xsl:value-of select="normalize-space(substring($str, string-length($Literal)+1))"/>
+	</rest>
+	<token>
+	  <xsl:copy-of select="$Literal"/>
+	</token>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:sequence select="parser:parseNoMatch($Literal, $str)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+  
+  <xsl:function name="parser:parseOptional">
+    <xsl:param name="Optional" as="node()"/>
+    <xsl:param name="str" as="xs:string"/>
+
+    <xsl:variable name="result">
+      <xsl:sequence select="parser:parse($Optional/*[1], $str)"/>
+    </xsl:variable>
+
+    <rest>
+      <xsl:value-of select="$result/rest"/>
+    </rest>
+    <token>
+      <Optional>
+	<xsl:if test="$Optional/@name">
+	  <xsl:attribute name="name">
+	    <xsl:value-of select="$Optional/@name"/>
+	  </xsl:attribute>
+	</xsl:if>
+	<xsl:copy-of select="$result/token/*[1]"/>
+      </Optional>
+    </token>
+    
+  </xsl:function>
+
+  <xsl:function name="parser:parseRegex">
+    <xsl:param name="Regex" as="node()"/>
+    <xsl:param name="str"   as="xs:string"/>
+
+    <xsl:if test="not($parser:NDEBUG)">
+      <xsl:message>
+	<xsl:text>Regex '</xsl:text>
+	<xsl:value-of select="$Regex"/>
+	<xsl:text>' in '</xsl:text>
+	<xsl:value-of select="$str"/>
+	<xsl:text>' ?</xsl:text>
+      </xsl:message>
+    </xsl:if>
+    
+    <xsl:variable name="rest"
+		  select="fn:replace($str, concat('^', $Regex), '')"/>
+
+    <xsl:variable name="matched"
+		  select="substring($str, 1, string-length($str) - string-length($rest))"/>
+    
+    <xsl:choose>
+      <xsl:when test="fn:matches($str, concat('^', $Regex))">
+	<rest>
+	  <xsl:value-of select="normalize-space($rest)"/>
+	</rest>
+	<token>
+	  <Regex>
+	    <xsl:if test="$Regex/@name">
+	      <xsl:attribute name="name">
+		<xsl:value-of select="$Regex/@name"/>
+	      </xsl:attribute>
+	    </xsl:if>
+	    <xsl:value-of select="$matched"/>
+	  </Regex>
+	</token>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:sequence select="parser:parseNoMatch($Regex, $str)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+
+  <xsl:function name="parser:parserList">
+    <xsl:param name="parserRoot"     as="node()"/>
+    <xsl:param name="parserElements" as="node()*"/>
+    
+    <xsl:copy select="$parserRoot">
+      <xsl:for-each select="$parserElements">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+    </xsl:copy>
+    
+  </xsl:function>
+  
+  <xsl:function name="parser:parseOr">
+    <xsl:param name="Or" as="node()"/>
+    <xsl:param name="str" as="xs:string"/>
+
+    <xsl:variable name="head-parser">
+      <xsl:sequence select="$Or/*[1]"/>
+    </xsl:variable>
+
+    <xsl:variable name="head-result">
+      <xsl:sequence select="parser:parse($head-parser/*[1],  $str)"/>
+    </xsl:variable>
+
+    
+    <xsl:choose>
+      <xsl:when test="not($head-result/token/NoMatch)">
+	<rest>
+	  <xsl:value-of select="$head-result/rest"/>
+	</rest>
+	<token>
+	  <Or>
+	    <xsl:if test="boolean($Or/@name)">
+	      <xsl:attribute name="name">
+		<xsl:value-of select="$Or/@name"/>
+	      </xsl:attribute>
+	    </xsl:if>
+	    <xsl:copy-of select="$head-result/token/*[1]"/>
+	  </Or>
+	</token>
+      </xsl:when>
+
+      <!-- 先頭でマッチしなかった場合 -->
+      <xsl:when test="count($Or/*) = 1">
+	<rest>
+	  <xsl:value-of select="$str"/>
+	</rest>
+	<token>
+	  <NoMatch/>
+	</token>
+      </xsl:when>
+      
+      <xsl:otherwise>
+	
+	<xsl:variable name="tail-parser">
+	  <xsl:sequence select="parser:parserList($Or, $Or/*[position() > 1])"/>
+	</xsl:variable>
+	
+	<xsl:sequence select="parser:parse($tail-parser/*[1], $str)"/>
+	
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+  
+  <xsl:function name="parser:parseAnd">
+    <xsl:param name="And" as="node()"/>
+    <xsl:param name="str" as="xs:string"/>
+
+    <xsl:variable name="head-parser">
+      <xsl:sequence select="$And/*[1]"/>
+    </xsl:variable>
+    
+    <xsl:variable name="head-result">
+      <xsl:sequence
+	  select="parser:parse($head-parser/*[1], $str)"/>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="$head-result/token/NoMatch">
+	
+	<xsl:sequence
+    	    select="parser:parseNoMatch($And, $str)"/>
+	
+      </xsl:when>
+      <xsl:when test="count($And/*) = 1">
+
+	<rest>
+	  <xsl:value-of select="$head-result/rest"/>
+	</rest>
+
+	<token>
+	  <And>
+	    <xsl:if test="$And/@name">
+	      <xsl:attribute name="name">
+		<xsl:value-of select="$And/@name"/>
+	      </xsl:attribute>
+	    </xsl:if>
+	    <xsl:copy-of select="$head-result/token/*[1]"/>
+	  </And>
+	</token>
+
+      </xsl:when>
+      <xsl:otherwise>
+
+	<xsl:variable name="tail-parser">
+	  <xsl:sequence
+	      select="parser:parserList($And, $And/*[position() > 1])"/>
+	</xsl:variable>
+
+	<xsl:variable name="tail-result">
+	  <xsl:sequence
+	      select="parser:parse($tail-parser/*[1], $head-result/rest)"/>
+	</xsl:variable>
+
+	<xsl:choose>
+	  <xsl:when test="$tail-result/token/NoMatch">
+	    <xsl:sequence
+		select="parser:parseNoMatch($And, $str)"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <rest>
+	      <xsl:value-of
+		  select="$tail-result/rest"/>
+	    </rest>
+	    <token>
+	      <And>
+		<xsl:if test="$And/@name">
+		  <xsl:attribute name="name">
+		    <xsl:value-of select="$And/@name"/>
+		  </xsl:attribute>
+		</xsl:if>
+		<xsl:copy-of
+		    select="$head-result/token/*[1]"/>
+		<xsl:for-each
+		    select="$tail-result/token/And/*">
+		  <xsl:copy-of select="."/>
+		</xsl:for-each>
+	      </And>
+	    </token>
+	  </xsl:otherwise>
+	</xsl:choose>	
+      </xsl:otherwise>
+    </xsl:choose>
+        
+  </xsl:function>
+
+  <xsl:function name="parser:parseZeroOrMore">
+    <xsl:param name="ZeroOrMore" as="node()"   />
+    <xsl:param name="str"        as="xs:string"/>
+    
+    <xsl:variable name="head-result">
+      <xsl:sequence select="parser:parse($ZeroOrMore/*[1], $str)"/>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="$head-result/token/NoMatch">
+
+	<rest>
+	  <xsl:value-of select="$str"/>
+	</rest>
+
+	<token>
+	  <ZeroOrMore>
+	    <xsl:if test="$ZeroOrMore/@name">
+    	      <xsl:attribute name="name">
+		<xsl:value-of select="$ZeroOrMore/@name"/>
+	      </xsl:attribute>
+    	    </xsl:if>
+	  </ZeroOrMore>
+	</token>
+	
+      </xsl:when>
+
+      <xsl:otherwise>
+	
+	<xsl:variable name="tail-result">
+	  <xsl:sequence select="parser:parse($ZeroOrMore, $head-result/rest)"/>
+	</xsl:variable>
+	
+	<rest>
+	  <xsl:value-of select="$tail-result/rest"/>
+	</rest>
+	<token>
+	  <ZeroOrMore>
+	    <xsl:if test="$ZeroOrMore/@name">
+	      <xsl:attribute name="name">
+		<xsl:value-of select="$ZeroOrMore/@name"/>
+	      </xsl:attribute>
+	    </xsl:if>
+	    <xsl:copy-of select="$head-result/token/*[1]"/>
+	    <xsl:for-each select="$tail-result/token/ZeroOrMore/*">
+	      <xsl:copy-of select="."/>
+	    </xsl:for-each>
+	  </ZeroOrMore>
+	</token>
+      </xsl:otherwise>
+      
+    </xsl:choose>
+    
+  </xsl:function>
+
+  <xsl:function name="parser:parseRef">
+    <xsl:param name="Ref" as="node()"   />
+    <xsl:param name="str" as="xs:string"/>
+    
+    <xsl:variable name="target"
+		  select="parser:getParser($Ref/@target)"/>
+    
+    <xsl:variable name="targetResult">
+      <xsl:sequence
+	  select="parser:parse($target, $str)"/>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="$targetResult/token/NoMatch">
+	<xsl:sequence select="parser:parseNoMatch($Ref, $str)"/>
+      </xsl:when>
+      <xsl:otherwise>
+	
+	<rest>
+	  <xsl:value-of select="$targetResult/rest"/>
+	</rest>
+    
+	<token>
+	  <Ref>
+	    <xsl:if test="$Ref/@name">
+	      <xsl:attribute name="name">
+		<xsl:value-of select="$Ref/@name"/>
+	      </xsl:attribute>
+	    </xsl:if>
+	    <xsl:copy-of select="$targetResult/token/*[1]"/>
+	  </Ref>
+	</token>
+	
+      </xsl:otherwise>
+    </xsl:choose>
+        
+  </xsl:function>
+    
+
+  <xsl:function name="parser:serializeToken">
+    <xsl:param name="token"/>
+
+    <xsl:variable name="isLiteral" as="xs:boolean">
+      <xsl:sequence select="name($token) = 'Literal'"/>
+    </xsl:variable>
+
+    <xsl:variable name="isRegex" as="xs:boolean">
+      <xsl:sequence select="name($token) = 'Regex'"/>
+    </xsl:variable>
+
+    
+    <xsl:variable name="result">
+      <xsl:text>(</xsl:text>
+      <xsl:value-of select="name($token)"/>
+      <xsl:if test="$token/@name">
+	<xsl:text>=</xsl:text>
+	<xsl:value-of select="$token/@name"/>
+      </xsl:if>
+      <xsl:choose>
+	<xsl:when test="$isLiteral or $isRegex">
+	  <xsl:text> '</xsl:text>
+	  <xsl:value-of select="$token"/>
+	  <xsl:text>'</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:for-each select="$token/*">
+	    <xsl:text> </xsl:text>
+	    <xsl:value-of select="parser:serializeToken(.)"/>
+	  </xsl:for-each>
+	</xsl:otherwise>
+      </xsl:choose>
+      <xsl:text>)</xsl:text>
+    </xsl:variable>
+    
+    <xsl:value-of
+	select="$result"/>
+    
+  </xsl:function>
+  
+</xsl:stylesheet>

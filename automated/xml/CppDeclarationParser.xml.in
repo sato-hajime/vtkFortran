@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="declarator">
+
+    <Ref target="ptr-declarator"/>
+
+    <And>
+      <Ref target="noptr-declarator"/>
+      <Ref tparameters-and-qualifiers trailing-return-type 
+    </And>
+  </Or>
+
+  <Or name="ptr-operator">
+    <And>
+    </And>
+  </Or>
+  
+  <Literal name="const-qualifier">const</Literal>
+  <Literal name="volatile-qualifier">volatile</Literal>
+
+  <Or name="cv-qualifier">
+    <Ref target="const-qualifier"/>
+    <Ref target="volatile-qualifier"/>
+  </Or>
+  
+  <Regex name="declarator">[a-zA-Z][a-zA-Z0-9_]*</Regex>
+
+
+  
+  <Or name="declaration-specifier">
+    <Ref target="storage-class-specifier"/>
+    <Ref target="type-specifier"/>
+    <Ref target="type-qualifier"/>
+  </Or>
+  
+  <Or name="type-specifier">
+    <Literal>void</Literal>
+    <Literal>char</Literal>
+    <Literal>short</Literal>
+    <Literal>int</Literal>
+    <Literal>long</Literal>
+    <Literal>float</Literal>
+    <Literal>double</Literal>
+    <Literal>signed</Literal>
+    <Literal>unsigned</Literal>
+    <!-- | <struct-or-union-specifier> -->
+    <!-- | <enum-specifier> -->
+    <!-- | <typedef-name> -->
+  </Or>
+
+  
+  
+</parsers>

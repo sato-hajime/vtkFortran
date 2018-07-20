@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="declarator">
+    <Ref target="ptr-declarator"/>
+    <And>
+      <Ref target="noptr-declarator"/>
+      <Ref target="parameters-and-qualifiers"/>
+      <!-- <Optional> -->
+      <!-- 	<Ref target="trailing-return-type"/> -->
+      <!-- </Optional> -->
+    </And>
+  </Or>
+  
+  <And name="ptr-declarator">
+    <ZeroOrMore>
+      <Ref target="ptr-operator"/>
+    </ZeroOrMore>
+    <Ref target="noptr-declarator"/>
+  </And>
+  
+  <Or name="noptr-declarator">
+    <And>
+      <Literal>(</Literal>
+      <Ref target="ptr-declarator"/>
+      <Literal>)</Literal>
+    </And>
+    <And>
+      <Ref target="declarator-id"/>
+    <!--   <ZeroOrMore> -->
+    <!-- 	<Ref target="attribute-specifier"/> -->
+    <!--   </ZeroOrMore> -->
+    </And>
+    <And>
+      <Ref target="noptr-declarator"/>
+      <Ref target="parameters-and-qualifiers"/>
+    </And>
+    <And>
+      <Ref target="noptr-declarator"/>
+      <Ref target="array-size-declarator"/>
+      <!-- <Optional> -->
+      <!-- 	<Ref target="attribute-sqcifier-seq"/> -->
+      <!-- </Optional> -->
+    </And>
+  </Or>
+
+  <And name="array-size-declarator">
+    <Literal>[</Literal>
+    <Regex>([1-9][0-9]+)?</Regex>
+    <Literal>]</Literal>
+  </And>
+  <!-- noptr-declarator -->
+  
+  <And name="parameters-and-qualifiers">
+    <Literal>(</Literal>
+    <Ref target="parameter-declaration-clause"/>
+    <Literal>)</Literal>
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-sqcifier-seq"/> -->
+    <!-- </Optional> -->
+    <ZeroOrMore>
+      <Ref target="cv-qualifier"/>
+    </ZeroOrMore>
+    <!-- <Optional> -->
+    <!--   <Ref target="ref-qualifier"/> -->
+    <!-- </Optional> -->
+    <!-- <Optional> -->
+    <!--   <Ref target="exception-specification"/> -->
+    <!-- </Optional> -->
+  </And>
+    
+  <Or name="cv-qualifier">
+    <Ref target="const-qualifier"/>
+    <Ref target="volatile-qualifier"/>
+  </Or>
+
+  <Literal name="const-qualifier">const</Literal>
+  <Literal name="volatile-qualifier">volatile</Literal>
+  <!-- cv-qualifier -->
+  
+  
+  <Or name="ptr-operator">
+    <Ref target="pointer-operator"/> 
+    <Ref target="RvalueReference-operator"/>
+    <Ref target="LvalueReference-operator"/>
+  </Or>
+  
+  <And name="pointer-operator">
+    <Literal>*</Literal>
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-specifier-seq"/> -->
+    <!-- </Optional> -->
+    <ZeroOrMore>
+      <Ref target="cv-qualifier"/>
+    </ZeroOrMore>
+  </And>
+  
+  <And name="LvalueReference-operator">
+    <Literal>&amp;</Literal>
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-specifier-seq"/> -->
+    <!-- </Optional> -->
+  </And>
+  
+  <And name="RvalueReference-operator">
+    <Literal>&amp;&amp;</Literal>
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-specifier-seq"/> -->
+    <!-- </Optional> -->
+  </And>
+  <!-- ptr-ref-operator -->
+
+  <Or name="declarator-id">
+    <And>
+      <Optional>
+	<Literal>...</Literal>
+      </Optional>
+      <Ref target="id-expression"/>
+    </And>
+  </Or>
+  
+</parsers>
