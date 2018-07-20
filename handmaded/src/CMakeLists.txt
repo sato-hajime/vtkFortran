@@ -8,9 +8,8 @@ set(foundation
 set(vtkSrc
   UnstructuredGridIO.cxx
   vtkAbstractArray.F90
-  vtkPoints.F90
   vtkCell.F90
-  #  vtkCellArray.F90
+  vtkCellArray.F90
   vtkCellData.F90
   vtkDataArray.F90
   vtkDataObject.F90
@@ -23,6 +22,7 @@ set(vtkSrc
   vtkObject.F90
   vtkObjectBase.F90
   vtkPointData.F90
+  vtkPoints.F90
   vtkPointSet.F90
   vtkStdString.F90
   vtkStringArray.F90
@@ -43,12 +43,12 @@ set(vtkSrc
   vtkObject_interface.cxx
   vtkObjectBase_interface.cxx
   vtkPointData_interface.cxx
+  vtkPoints_interface.cxx
   vtkPointSet_interface.cxx
   vtkStdString_interface.cxx
   vtkStringArray_interface.cxx
   vtkUnsignedCharArray_interface.cxx
   vtkUnstructuredGrid_interface.cxx
-  vtkPoints_interface.cxx
   )
 
 set(vtkClassSrc
