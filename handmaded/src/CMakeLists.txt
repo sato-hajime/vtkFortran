@@ -26,6 +26,7 @@ set(vtkSrc
   vtkPointSet.F90
   vtkStdString.F90
   vtkStringArray.F90
+  vtkUnsignedCharArray.F90
   vtkUnstructuredGrid.F90
   vtkAbstractArray_interface.cxx
   vtkCellArray_interface.cxx
@@ -45,6 +46,7 @@ set(vtkSrc
   vtkPointSet_interface.cxx
   vtkStdString_interface.cxx
   vtkStringArray_interface.cxx
+  vtkUnsignedCharArray_interface.cxx
   vtkUnstructuredGrid_interface.cxx
   vtkPoints_interface.cxx
   )
@@ -106,6 +108,7 @@ add_library(
   vtkDoubleArray_wrapper.F90
   vtkIdTypeArray_wrapper.F90
   vtkIntArray_wrapper.F90
+  vtkUnsignedCharArray_wrapper.F90
   )
 target_link_libraries(
   vtkFortran_wrapper
