@@ -1,5 +1,5 @@
 
-module m_vtkCellArray
+module m_vtkCellArrayClass
 
   use iso_c_binding
 
@@ -10,4 +10,4 @@ module m_vtkCellArray
   type,extends(vtkObject) :: vtkCellArray
   end type vtkCellArray
   
-end module m_vtkCellArray
+end module m_vtkCellArrayClass
