@@ -1,7 +1,7 @@
 
 configure_file(
-  CppDeclarationParser.xml.in
-  CppDeclarationParser.xml
+  parser.xsl.in
+  parser.xsl
   )
 
 configure_file(
@@ -40,11 +40,6 @@ configure_file(
   )
 
 configure_file(
-  parser.xsl.in
-  parser.xsl
-  )
-
-configure_file(
   vtkFortranIntermediateData.xsl.in
   vtkFortranIntermediateData.xsl
   )
@@ -57,6 +52,7 @@ add_custom_command(
   -o:vtkFortranIntermediateData.xml
   DEPENDS ${VTK_HEADER_INDEX_XML}
   ${CMAKE_CURRENT_BINARY_DIR}/vtkFortranIntermediateData.xsl  
+  ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
   ${CMAKE_CURRENT_BINARY_DIR}/parser-definition.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lex.xml
   ${CMAKE_CURRENT_BINARY_DIR}/expr.xml
@@ -64,7 +60,6 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-decl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-fct.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-type.xml  
-  ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
   )
 
 add_custom_target(vtkFortranIntermediateData ALL
