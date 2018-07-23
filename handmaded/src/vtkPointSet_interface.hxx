@@ -6,8 +6,9 @@
 #include <vtkPoints.h>
 
 extern "C" {
-
-  void vtkPointSet_SetPoints(vtkPointSet*, vtkPoints*) ;
+  
   vtkPoints* vtkPointSet_GetPoints(vtkPointSet*) ;
-
+  void vtkPointSet_SetPoints(vtkPointSet*, vtkPoints*) ;
+  
 }
+
