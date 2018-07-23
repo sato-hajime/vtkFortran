@@ -62,7 +62,8 @@ contains
     type(c_ptr) :: this
     this = vtkObjectBase_New_c()
 #if !defined(NDEBUG)
-    print '(A,Z0.16)', "vtkObjectBase_New() returened 0x",this
+    write (error_unit, '(A,Z0.16)'), &
+         "vtkObjectBase_New() returned 0x",this
 #endif
   end function vtkObjectBase_New
   
@@ -75,7 +76,8 @@ contains
        stop 1
     end if
 #if !defined(NDEBUG)
-    print '(A,z0.16,A)', "vtkObjectBase_Delete(0x",this, ")"
+    write(error_unit, '(A,z0.16,A)'), &
+         "vtkObjectBase_Delete(0x",this, ")"
 #endif
     call vtkObjectBase_Delete_c(this)
     this = c_null_ptr
