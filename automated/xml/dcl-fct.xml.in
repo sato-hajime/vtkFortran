@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
 <parsers>
 
-  <Ref name="parameter-declaration-clause"
-       target="parameter-declaration-list"/>
+  <Or name="parameter-declaration-clause">
+    <Optional>
+      <Ref target="parameter-declaration-list"/>
+    </Optional>
+  </Or>
   
   <And name="parameter-declaration-list">
     <Ref target="parameter-declaration"/>
