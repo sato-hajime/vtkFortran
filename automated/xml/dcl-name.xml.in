@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="abstract-declarator">
+    <Ref target="ptr-abstract-declarator"/>
+    <And>
+      <Optional>
+	<Ref target="noptr-abstract-declarator"/>
+      </Optional>
+      <Ref target="parameters-and-qualifiers"/>
+    </And>
+  </Or>
+  
+  <And name="ptr-abstract-declarator">
+    <ZeroOrMore>
+      <Ref target="ptr-operator"/>
+    </ZeroOrMore>
+    <Optional>
+      <Ref target="noptr-abstract-declarator"/>
+    </Optional>
+  </And>
+
+  <And name="noptr-abstract-declarator">
+    <Optional>
+      <Literal>(</Literal>
+      <Ref target="ptr-abstract-declarator"/>
+      <Literal>)</Literal>
+    </Optional>
+    <ZeroOrMore>
+      <Or>
+	<Ref target="parameters-and-qualifiers"/>
+	<Ref target="array-size-declarator"/>
+      </Or>
+    </ZeroOrMore>
+  </And>
+  
+</parsers>

@@ -24,9 +24,9 @@
     <Ref target="decl-specifier"/>
     <Or>
       <Ref target="declarator"/>
-      <!-- <Optional> -->
-      <!-- 	<Ref target="abstract-declarator"/> -->
-      <!-- </Optional> -->
+      <Optional>
+	<Ref target="abstract-declarator"/>
+      </Optional>
     </Or>
     <!-- <Optional> -->
     <!--   <And> -->
