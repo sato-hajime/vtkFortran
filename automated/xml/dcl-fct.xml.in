@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="parameter-declaration-clause">
+    <Optional>
+      <Ref target="parameter-declaration-list"/>
+    </Optional>
+  </Or>
+  
+  <And name="parameter-declaration-list">
+    <Ref target="parameter-declaration"/>
+    <ZeroOrMore>
+      <And>
+	<Literal>,</Literal>
+	<Ref target="parameter-declaration"/>
+      </And>
+    </ZeroOrMore>
+  </And>
+
+  <And name="parameter-declaration">
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-specifier-seq"/> -->
+    <!-- </Optional> -->
+    <Ref target="decl-specifier"/>
+    <Or>
+      <Ref target="declarator"/>
+      <!-- <Optional> -->
+      <!-- 	<Ref target="abstract-declarator"/> -->
+      <!-- </Optional> -->
+    </Or>
+    <!-- <Optional> -->
+    <!--   <And> -->
+    <!-- 	<Literal>=</Literal> -->
+    <!-- 	<Ref target="initializer-clause"/> -->
+    <!--   </And> -->
+    <!-- </Optional> -->
+  </And>
+  
+</parsers>

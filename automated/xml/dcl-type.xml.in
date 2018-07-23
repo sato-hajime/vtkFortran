@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="type-specifier">
+    <Ref target="trailing-type-specifier"/>
+    <!-- <Ref target="class-specifier"/> -->
+  </Or>
+  
+  <Or name="trailing-type-specifier">
+    <Ref target="simple-type-specifier"/>
+  </Or>
+  
+  <Or name="simple-type-specifier">
+    <And>
+      <!-- <Optional> -->
+      <!-- 	<Literal>::</Literal> -->
+      <!-- </Optional> -->
+      <!-- <Optional> -->
+      <!-- 	<Ref tatget="nested-name-specifier"/> -->
+      <!-- </Optional> -->
+      <Ref target="type-name"/>
+    </And>
+    <Literal>char</Literal>
+    <Literal>bool</Literal>
+    <Literal>int</Literal>
+    <Literal>long</Literal>
+    <Literal>signed</Literal>
+    <Literal>unsigned</Literal>
+    <Literal>float</Literal>
+    <Literal>double</Literal>
+    <Literal>void</Literal>
+    <And>
+      <Literal>unsigned</Literal>
+      <Literal>int</Literal>
+    </And>
+  </Or>
+
+  <Or name="type-name">
+    <Ref target="class-name"/>
+  </Or>
+  
+  <Or name="class-name">
+    <Ref target="identifier"/>
+  </Or>
+  
+</parsers>

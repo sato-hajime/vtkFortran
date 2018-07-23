@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <And name="decl-specifier-seq">
+    <Ref target="decl-specifier"/>
+    <ZeroOrMore>
+      <Ref target="decl-specifier"/>
+    </ZeroOrMore>
+    <!-- <Optional> -->
+    <!--   <Ref target="attribute-specifier-seq"/> -->
+    <!-- </Optional> -->
+  </And>
+
+  <Or name="decl-specifier">
+    <!-- <Ref target="storage-class-specifier"/>     -->
+    <Ref target="type-specifier"/>
+    <!-- <Ref target="function-specifier"/> -->
+    <Literal>friend</Literal>
+    <Literal>typedef</Literal>
+    <Literal>constexpr</Literal>
+  </Or>
+  
+</parsers>

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<parsers>
+  
+  <Ref name="args-name" target="identifier"/>
+  
+  <And name="type-spec">
+    <Optional>
+      <Ref target="cv-qualifier"/>
+    </Optional>
+    <Ref target="type-name"/>
+    <ZeroOrMore>
+      <Ref target="ptr-ref-operator"/>
+    </ZeroOrMore>
+    <Optional>
+      <Ref target="args-name"/>
+    </Optional>
+  </And>
+  
+  <Optional name="type-spec-list">
+    <And>
+      <Ref target="type-spec"/>
+      <ZeroOrMore>
+	<And>
+	  <Literal>,</Literal>
+	  <Ref target="type-spec"/>
+	</And>
+      </ZeroOrMore>
+    </And>
+  </Optional>
+  
+  <And name="argsstring">
+    <Ref target="parameters-and-qualifiers"/>
+    <Optional>
+      <And>
+	<Literal>=</Literal>
+	<Or>
+	  <Literal>0</Literal>
+	</Or>
+      </And>
+    </Optional>
+  </And>
+  
+</parsers>
