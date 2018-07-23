@@ -1,12 +1,9 @@
 
 #include "vtkUnstructuredGrid_interface.hxx"
 
-//#include "UnstructuredGridIO.hxx"
+#include "UnstructuredGridIO.hxx"
 
 #include <vtkSmartPointer.h>
-#include <vtkUnstructuredGridReader.h>
-#include <vtkUnstructuredGridWriter.h>
-
 
 extern "C" {
 
@@ -15,30 +12,40 @@ extern "C" {
       vtkUnstructuredGrid::New() ;
     return obj.GetPointer() ;
   };
-
   
   void readVtkUnstructuredGrid(vtkUnstructuredGrid* uGrid, const char* fName) {
-    vtkSmartPointer<vtkUnstructuredGridReader> reader = \
-      vtkUnstructuredGridReader::New() ;
-    reader->SetFileName(fName) ;
-    reader->ReadAllScalarsOn() ;
-    reader->ReadAllVectorsOn() ;
-    reader->ReadAllTensorsOn() ;
-    reader->Update() ;
-    uGrid->DeepCopy(reader->GetOutput()) ;
+    uGrid->DeepCopy(UnstructuredGridIO::read(fName)) ;
   };
 
   void writeVtkUnstructuredGrid(vtkUnstructuredGrid* uGrid, const char* fName) {
-    vtkSmartPointer<vtkUnstructuredGridWriter> writer = \
-      vtkUnstructuredGridWriter::New() ;
-    writer->SetFileName(fName) ;
-    writer->SetInputData(uGrid) ;
-    writer->Update() ;
+    UnstructuredGridIO::write(vtkSmartPointer<vtkUnstructuredGrid>::Take(uGrid), fName) ;
+  };
+
+  
+  void vtkUnstructuredGrid_Delete(vtkUnstructuredGrid* uGrid) {
+    uGrid->Delete() ;
+  };
+
+  vtkCellArray* vtkUnstructuredGrid_GetCells(vtkUnstructuredGrid* uGrid) {
+    return uGrid->GetCells() ;
+  };
+
+  vtkUnsignedCharArray* vtkUnstructuredGrid_GetCellTypesArray(vtkUnstructuredGrid* uGrid) {
+    return uGrid->GetCellTypesArray() ;
+  };
+
+  vtkIdTypeArray* vtkUnstructuredGrid_GetCellLocationsArray(vtkUnstructuredGrid* uGrid) {
+    return uGrid->GetCellLocationsArray() ;
+  } ;
+
+  void vtkUnstructuredGrid_SetCells_i_vtkCellArrayp
+  (vtkUnstructuredGrid* uGrid, int  type , vtkCellArray* cells) {
+    uGrid->SetCells(type , cells) ;
   };
   
-  // vtkCellArray* vtkUnstructuredGrid_GetCells(vtkUnstructuredGrid* uGrid) {
-  //   vtkSmartPointer<vtkCellArray> cells = uGrid->GetCells() ;
-  //   return cells.GetPointer() ;
-  // };
-
-}
+  void vtkUnstructuredGrid_SetCells_ip_vtkCellArrayp
+  (vtkUnstructuredGrid* uGrid, int* types, vtkCellArray* cells) {
+    uGrid->SetCells(types, cells) ;
+  };
+  
+} ;
