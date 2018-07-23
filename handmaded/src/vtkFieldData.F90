@@ -12,6 +12,7 @@ module m_vtkFieldData
   end interface vtkFieldData_GetAbstractArray
   
   interface
+
      function vtkFieldData_GetNumberOfArrays(fData) result(nArray) &
           bind(C, name="vtkFieldData_GetNumberOfArrays")
        import c_ptr, c_int
@@ -19,14 +20,6 @@ module m_vtkFieldData
        integer(c_int)    :: nArray
      end function vtkFieldData_GetNumberOfArrays
 
-     function vtkFieldData_AddArray(fData, array) result(arrayIdx) &
-          bind(C, name="vtkFieldData_AddArray")
-       import c_ptr, c_int
-       type(c_ptr),value :: fData
-       type(c_ptr),value :: array
-       integer(c_int)    :: arrayIdx
-     end function vtkFieldData_AddArray
-     
      function vtkFieldData_GetAbstractArray_i0(fData, index) &
           result(arr) bind(C, name="vtkFieldData_GetAbstractArray_i0")
        import c_ptr, c_int
@@ -43,6 +36,14 @@ module m_vtkFieldData
        integer(c_int)    :: index
        type(c_ptr)       :: arr
      end function vtkFieldData_GetAbstractArray_cp_ip_c
+
+     function vtkFieldData_AddArray(fData, array) result(index) &
+          bind(C, name="vtkFieldData_AddArray")
+       import c_ptr, c_int
+       integer(c_int)    :: index
+       type(c_ptr),value :: fData
+       type(c_ptr),value :: array
+     end function vtkFieldData_AddArray
      
   end interface
 
@@ -54,13 +55,13 @@ contains
     character(*,c_char),intent(in) :: arrayName
     integer(c_int),intent(out)     :: index
     type(c_ptr)                    :: array
-    call GetAbstractArray_cp_ip_terminated(arrayName//c_null_char)
-  contains
-    subroutine GetAbstractArray_cp_ip_terminated(terminated)
-      character(*,c_char),intent(in) :: terminated
-      array = vtkFieldData_GetAbstractArray_cp_ip_c( &
-           fData, f2c(terminated), index)
-    end subroutine GetAbstractArray_cp_ip_terminated
+    if ( .not. nullContained(arrayName) ) then
+       array = vtkFieldData_GetAbstractArray_cp_ip( &
+            fData, arrayName // c_null_char, index)
+    else
+       array = vtkFieldData_GetAbstractArray_cp_ip_c( &
+            fData, f2c(arrayName), index)
+    end if
   end function vtkFieldData_GetAbstractArray_cp_ip
   
 end module m_vtkFieldData
