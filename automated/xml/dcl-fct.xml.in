@@ -7,8 +7,10 @@
   <And name="parameter-declaration-list">
     <Ref target="parameter-declaration"/>
     <ZeroOrMore>
-      <Literal>,</Literal>
-      <Ref target="parameter-declaration"/>
+      <And>
+	<Literal>,</Literal>
+	<Ref target="parameter-declaration"/>
+      </And>
     </ZeroOrMore>
   </And>
 
