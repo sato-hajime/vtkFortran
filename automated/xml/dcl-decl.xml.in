@@ -19,30 +19,27 @@
     <Ref target="noptr-declarator"/>
   </And>
   
-  <Or name="noptr-declarator">
-    <And>
-      <Literal>(</Literal>
-      <Ref target="ptr-declarator"/>
-      <Literal>)</Literal>
-    </And>
-    <And>
-      <Ref target="declarator-id"/>
-    <!--   <ZeroOrMore> -->
-    <!-- 	<Ref target="attribute-specifier"/> -->
-    <!--   </ZeroOrMore> -->
-    </And>
-    <And>
-      <Ref target="noptr-declarator"/>
-      <Ref target="parameters-and-qualifiers"/>
-    </And>
-    <And>
-      <Ref target="noptr-declarator"/>
-      <Ref target="array-size-declarator"/>
-      <!-- <Optional> -->
-      <!-- 	<Ref target="attribute-sqcifier-seq"/> -->
-      <!-- </Optional> -->
-    </And>
-  </Or>
+  <And name="noptr-declarator">
+    <Or>
+      <And>
+	<Literal>(</Literal>
+	<Ref target="ptr-declarator"/>
+	<Literal>)</Literal>
+      </And>
+      <And>
+	<Ref target="declarator-id"/>
+	<!--   <ZeroOrMore> -->
+	<!-- 	<Ref target="attribute-specifier"/> -->
+	<!--   </ZeroOrMore> -->
+      </And>
+    </Or>
+    <ZeroOrMore>
+      <Or>
+	<Ref target="parameters-and-qualifiers"/>
+	<Ref target="array-size-declarator"/>
+      </Or>
+    </ZeroOrMore>
+  </And>
 
   <And name="array-size-declarator">
     <Literal>[</Literal>
