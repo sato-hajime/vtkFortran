@@ -76,6 +76,9 @@
       <xsl:when test="name($parserRoot) = 'Ref'">
 	<xsl:sequence select="parser:parseRef($parserRoot, $str)"/>
       </xsl:when>
+      <xsl:when test="name($parserRoot) = 'NotAny'">
+	<xsl:sequence select="parser:parseNotAny($parserRoot, $str)"/>
+      </xsl:when>
       <xsl:otherwise>
 	<xsl:message>
 	  <xsl:text>unknown type </xsl:text>
@@ -464,6 +467,31 @@
   </xsl:function>
     
 
+  <xsl:function name="parser:parseNotAny">
+    <xsl:param name="NotAny" as="node()"   />
+    <xsl:param name="str"    as="xs:string"/>    
+    
+    <xsl:variable name="result">
+      <xsl:sequence
+	  select="parser:parse($NotAny/*[1], $str)"/>
+    </xsl:variable>
+    
+    <xsl:choose>
+      <xsl:when test="not($result/token/NoMatch)">
+	<xsl:sequence select="parser:parseNoMatch($NotAny, $str)"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<rest>
+	  <xsl:value-of select="$str"/>
+	</rest>
+	<token>
+	  <NotAny/>
+	</token>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+  
   <xsl:function name="parser:serializeToken">
     <xsl:param name="token"/>
 
