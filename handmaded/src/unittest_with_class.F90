@@ -24,6 +24,7 @@ contains
   subroutine writeTest
     type(vtkUnstructuredGrid) :: uGrid
     type(vtkPoints)           :: pts
+    integer(c_int) :: ptsID
     integer i, j, k
     
     print *, 'test > "'//vtkFile//'"'
@@ -34,7 +35,7 @@ contains
     do i = 0,1
        do j = 0,1
           do k = 0,1
-             call pts%InsertNextPoint( &
+             ptsID = pts%InsertNextPoint( &
                   real(i,c_double), &
                   real(j,c_double), &
                   real(k,c_double)  &

@@ -25,7 +25,7 @@ contains
     
     integer iPoint
     
-    allocate( points( 3, 0:vtkDataSet_GetNumberOfPoints(dataSet)-1 ) )
+    allocate( points( 0:2, 0:vtkDataSet_GetNumberOfPoints(dataSet)-1 ) )
     do iPoint = lbound(points,2), ubound(points,2)
        points(:,iPoint) = vtkDataSet_GetPoint(dataSet, iPoint)
     end do

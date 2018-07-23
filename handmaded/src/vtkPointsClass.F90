@@ -37,17 +37,16 @@ contains
     obj%ptr = vtkPoints_New()
   end subroutine vtkPointsMethod_New
 
-  subroutine vtkPointsMethod_InsertNextPoint_d3(pts, pt)
+  integer(c_int) function vtkPointsMethod_InsertNextPoint_d3(pts, pt) result(id)
     class(vtkPoints)          :: pts
     real(c_double),intent(in) :: pt(3)
-    call vtkPoints_InsertNextPoint(pts%ptr, pt)
-  end subroutine vtkPointsMethod_InsertNextPoint_d3
+    id = vtkPoints_InsertNextPoint(pts%ptr, pt(1), pt(2), pt(3))
+  end function vtkPointsMethod_InsertNextPoint_d3
 
-  subroutine vtkPointsMethod_InsertNextPoint_3d(pts, x, y, z)
+  integer(c_int) function vtkPointsMethod_InsertNextPoint_3d(pts, x, y, z) result(id)
     class(vtkPoints)          :: pts
     real(c_double),intent(in) :: x, y, z
-    call vtkPoints_InsertNextPoint(pts%ptr, x, y, z)
-  end subroutine vtkPointsMethod_InsertNextPoint_3d
-  
+    id = vtkPoints_InsertNextPoint(pts%ptr, x, y, z)
+  end function vtkPointsMethod_InsertNextPoint_3d
   
 end module m_vtkPointsClass

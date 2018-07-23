@@ -1,45 +1,55 @@
 
 module m_vtkPoints
 
+  use iso_fortran_env, only : error_unit
   use iso_c_binding
 
   implicit none
 
   interface vtkPoints_InsertNextPoint
-     subroutine vtkPoints_InsertNextPoint_d3(pts, pt) &
-          bind(C, name="vtkPoints_InsertNextPoint_d3")
-       import c_ptr, c_double
-       type(c_ptr),value         :: pts
-       real(c_double),intent(in) :: pt(3)
-     end subroutine vtkPoints_InsertNextPoint_d3
-     
-     subroutine vtkPoints_InsertNextPoints_3d(pts, x, y, z) &
-          bind(C, name="vtkPoints_InsertNextPoint_3d")
-       import c_ptr, c_double
-       type(c_ptr),value    :: pts
-       real(c_double),value :: x, y, z
-     end subroutine vtkPoints_InsertNextPoints_3d
+     procedure :: vtkPoints_InsertNextPoint_lf_lf_lf
   end interface vtkPoints_InsertNextPoint
   
   interface
-     function vtkPoints_New_c() result(obj) &
+     function vtkPoints_New_c() result(pts) &
           bind(C, name="vtkPoints_New")
        import c_ptr
-       type(c_ptr) :: obj
+       type(c_ptr) :: pts
      end function vtkPoints_New_c
 
+     subroutine vtkPoints_Delete(pts) &
+          bind(C, name="vtkPoints_Delete")
+       import c_ptr
+       type(c_ptr),value :: pts
+     end subroutine vtkPoints_Delete
+
+     function vtkPoints_GetNumberOfPoints(pts) result(nPts) &
+          bind(C, name="vtkPoints_GetNumberOfPoints")
+       import c_ptr, c_int
+       type(c_ptr),value :: pts
+       integer(c_int)    :: nPts
+     end function vtkPoints_GetNumberOfPoints
+     
+     function vtkPoints_InsertNextPoint_lf_lf_lf(pts, x, y, z) result(id) &
+          bind(C, name="vtkPoints_InsertNextPoint_lf_lf_lf")
+       import c_ptr, c_int, c_double
+       integer(c_int)       :: id
+       type(c_ptr),value    :: pts
+       real(c_double),value :: x, y, z
+     end function vtkPoints_InsertNextPoint_lf_lf_lf
+     
   end interface
 
 contains
 
-  function vtkPoints_New() result(this)
+  function vtkPoints_New() result(pts)
     implicit none
-    type(c_ptr) :: this
-    this = vtkPoints_New_c()
+    type(c_ptr) :: pts
+    pts = vtkPoints_New_c()
 #if !defined(NDEBUG)
-    print '(A,Z0.16)', "vtkPoints_New() returened 0x",this
+    write (error_unit, '(A,Z0.16)'), &
+         "vtkPoints_New() returned 0x", pts
 #endif
   end function vtkPoints_New
-  
-    
+
 end module m_vtkPoints
