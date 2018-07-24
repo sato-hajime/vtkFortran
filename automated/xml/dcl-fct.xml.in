@@ -21,7 +21,7 @@
     <!-- <Optional> -->
     <!--   <Ref target="attribute-specifier-seq"/> -->
     <!-- </Optional> -->
-    <Ref target="decl-specifier"/>
+    <Ref target="decl-specifier-seq"/>
     <Or>
       <Ref target="declarator"/>
       <Optional>
