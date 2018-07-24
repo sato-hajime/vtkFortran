@@ -24,6 +24,9 @@
       <xsl:for-each select="document('expr.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>
+      <xsl:for-each select="document('expr-prim-general.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
       <xsl:for-each select="document('dcl.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>

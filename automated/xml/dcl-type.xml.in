@@ -15,12 +15,12 @@
   
   <Or name="simple-type-specifier">
     <And>
-      <!-- <Optional> -->
-      <!-- 	<Literal>::</Literal> -->
-      <!-- </Optional> -->
-      <!-- <Optional> -->
-      <!-- 	<Ref tatget="nested-name-specifier"/> -->
-      <!-- </Optional> -->
+      <Optional>
+	<Literal>::</Literal>
+      </Optional>
+      <Optional>
+      	<Ref target="nested-name-specifier"/>
+      </Optional>
       <Ref target="type-name"/>
     </And>
     <Literal>char</Literal>

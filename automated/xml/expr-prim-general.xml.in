@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="id-expression">
+    <Ref target="unqualified-id"/>
+    <!-- <Ref target="qualified-id"/> -->
+  </Or>
+
+  <Ref name="unqualified-id" target="identifier"/>
+
+  <Or name="nested-name-specifier-final">
+    <And>
+      <Ref target="identifier"/>
+      <Literal>::</Literal>
+    </And>
+    <!-- <And> -->
+    <!--   <Optional> -->
+    <!-- 	<Literal>template</Literal> -->
+    <!--   </Optional> -->
+    <!--   <Ref target="simple-template-id"/> -->
+    <!--   <Literal>::</Literal> -->
+    <!-- </And> -->
+  </Or>
+  
+  <Or name="nested-name-specifier">
+    <ZeroOrMore>
+      <And>
+	<Or>
+	  <Ref target="type-name"/>
+	  <!-- <Ref target="namespace-name"/> -->
+	  <!-- <Ref target="decltype-name"/> -->
+	</Or>
+	<Literal>::</Literal>
+	<!-- <FollowedBy> -->
+	<!--   <Ref target="nested-name-specifier-final"/> -->
+	<!-- </FollowedBy> -->
+      </And>
+    </ZeroOrMore>
+    <Ref target="nested-name-specifier-final"/>
+  </Or>
+</parsers>

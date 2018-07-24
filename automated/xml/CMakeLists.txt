@@ -25,6 +25,11 @@ configure_file(
   )
 
 configure_file(
+  expr-prim-general.xml.in
+  expr-prim-general.xml
+  )
+
+configure_file(
   dcl.xml.in
   dcl.xml
   )
@@ -70,8 +75,9 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
   ${CMAKE_CURRENT_BINARY_DIR}/parser-definition.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lex.xml
-  ${CMAKE_CURRENT_BINARY_DIR}/class-mem.xml  
+  ${CMAKE_CURRENT_BINARY_DIR}/class-mem.xml
   ${CMAKE_CURRENT_BINARY_DIR}/expr.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/expr-prim-general.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-decl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-fct.xml
