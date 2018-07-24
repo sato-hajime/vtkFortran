@@ -128,12 +128,6 @@
 	    <xsl:text>"</xsl:text>
 	  </xsl:message>
 	</xsl:if>
-
-	<xsl:message>
-	  <xsl:text>parse type '</xsl:text>
-	  <xsl:value-of select="type"/>
-	  <xsl:text>'</xsl:text>
-	</xsl:message>
 	
 	<xsl:variable name="type-toks">
 	  <xsl:sequence select="parser:type-spec(type)"/>
@@ -155,10 +149,6 @@
 	    <xsl:sequence
 		select="vtkf:typeID($type-toks//*[@name='type-spec'])"/>
 	  </type>
-	  	  
-	  <xsl:message>
-	    <xsl:value-of select="parser:serializeToken($arg-toks/token)"/>
-	  </xsl:message>
 	  
 	  <!-- argument tokens -->
 	  <arguments>
@@ -172,9 +162,6 @@
 	    </xsl:for-each>
 	  </arguments>
 	  
-	  <xsl:message>
-	    <xsl:value-of select="argsstring"/>
-	  </xsl:message>
 	</method>
       </xsl:for-each>
     </class>
