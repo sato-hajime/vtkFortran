@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
 <parsers>
-
+  
+  <Or name="primary-expression">
+    <Ref target="literal"/>
+    <Ref target="id-expression"/>
+  </Or>
+  
   <Or name="id-expression">
     <Ref target="unqualified-id"/>
     <!-- <Ref target="qualified-id"/> -->
   </Or>
 
   <Ref name="unqualified-id" target="identifier"/>
-
+  
   <Or name="nested-name-specifier-final">
     <And>
       <Ref target="identifier"/>

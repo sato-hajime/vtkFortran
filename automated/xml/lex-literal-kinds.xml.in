@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <Or name="literal">
+    <Ref target="integer-literal"/>
+    <Ref target="pointer-literal"/>
+  </Or>
+
+  <And name="integer-literal">
+    <Or>
+      <Ref target="decimal-literal"/>
+      <Ref target="octal-literal"/>
+      <Ref target="hexadecimal-literal"/>
+    </Or>
+  </And>
+
+  <Regex name="decimal-literal"
+	 >[1-9][0-9]*</Regex>
+  <Regex name="octal-literal"
+	 >0[0-7]*</Regex>
+  <Regex name="hexadecimal-literal"
+	 >0[xX][0-9a-fA-F]*</Regex>
+
+  <Or name="pointer-literal">
+    <Literal>nullptr</Literal>
+  </Or>
+  
+</parsers>

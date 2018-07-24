@@ -15,6 +15,11 @@ configure_file(
   )
 
 configure_file(
+  lex-literal-kinds.xml.in
+  lex-literal-kinds.xml
+  )
+
+configure_file(
   class-mem.xml.in
   class-mem.xml
   )
@@ -80,6 +85,7 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
   ${CMAKE_CURRENT_BINARY_DIR}/parser-definition.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lex.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/lex-literal-kinds.xml
   ${CMAKE_CURRENT_BINARY_DIR}/class-mem.xml
   ${CMAKE_CURRENT_BINARY_DIR}/expr.xml
   ${CMAKE_CURRENT_BINARY_DIR}/expr-prim-general.xml
