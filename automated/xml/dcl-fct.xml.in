@@ -28,12 +28,12 @@
 	<Ref target="abstract-declarator"/>
       </Optional>
     </Or>
-    <!-- <Optional> -->
-    <!--   <And> -->
-    <!-- 	<Literal>=</Literal> -->
-    <!-- 	<Ref target="initializer-clause"/> -->
-    <!--   </And> -->
-    <!-- </Optional> -->
+    <Optional>
+      <And>
+	<Literal>=</Literal>
+	<Ref target="initializer-clause"/>
+      </And>
+    </Optional>
   </And>
   
 </parsers>

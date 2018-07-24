@@ -33,6 +33,9 @@
       <xsl:for-each select="document('dcl-fct.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>
+      <xsl:for-each select="document('dcl-init.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>      
       <xsl:for-each select="document('dcl-name.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>

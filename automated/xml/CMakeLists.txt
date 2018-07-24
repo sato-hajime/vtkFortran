@@ -40,6 +40,11 @@ configure_file(
   )
 
 configure_file(
+  dcl-init.xml.in
+  dcl-init.xml
+  )
+
+configure_file(
   dcl-name.xml.in
   dcl-name.xml
   )
@@ -70,6 +75,7 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/dcl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-decl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-fct.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/dcl-init.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-name.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-type.xml  
   )
