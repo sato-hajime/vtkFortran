@@ -45,6 +45,9 @@
       <xsl:for-each select="document('dcl-type.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>
+      <xsl:for-each select="document('temp-names.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
     </xsl:sequence>
   </xsl:variable>
 

@@ -60,6 +60,11 @@ configure_file(
   )
 
 configure_file(
+  temp-names.xml.in
+  temp-names.xml
+  )
+
+configure_file(
   vtkFortranIntermediateData.xsl.in
   vtkFortranIntermediateData.xsl
   )
@@ -83,8 +88,8 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-fct.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-init.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-name.xml
-  ${CMAKE_CURRENT_BINARY_DIR}/dcl-type.xml  
-  )
+  ${CMAKE_CURRENT_BINARY_DIR}/temp-names.xml   
+ )
 
 add_custom_target(vtkFortranIntermediateData ALL
   DEPENDS vtkFortranIntermediateData.xml

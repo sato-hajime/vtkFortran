@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <And name="simple-template-id">
+    <Ref target="template-name"/>
+    <Literal>&lt;</Literal>
+    <Optional>
+      <Ref target="template-argument-list"/>
+    </Optional>
+    <Literal>&gt;</Literal>
+  </And>
+
+  <Ref name="template-name" target="identifier"/>
+
+  <And name="template-argument-list">
+    <Ref target="template-argument"/>
+    <ZeroOrMore>
+      <And>
+	<Literal>,</Literal>
+	<Ref target="template-argument"/>
+      </And>
+    </ZeroOrMore>
+    <Optional>
+      <Literal>...</Literal>
+    </Optional>
+  </And>
+
+  <Or name="template-argument">
+    <!-- <Ref target="constant-expression"/> -->
+    <Ref target="type-id"/>
+    <!-- <Ref target="id-expression"/> -->
+  </Or>
+  
+</parsers>

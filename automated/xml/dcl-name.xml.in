@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <parsers>
 
+  <And name="type-id">
+    <Ref target="type-specifier-seq"/>
+    <Optional>
+      <Ref target="abstract-declarator"/>
+    </Optional>
+  </And>
+  
   <Or name="abstract-declarator">
     <Ref target="ptr-abstract-declarator"/>
     <And>
