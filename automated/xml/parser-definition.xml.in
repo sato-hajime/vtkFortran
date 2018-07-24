@@ -9,7 +9,7 @@
     </Optional>
     <Ref target="type-name"/>
     <ZeroOrMore>
-      <Ref target="ptr-ref-operator"/>
+      <Ref target="ptr-operator"/>
     </ZeroOrMore>
     <Optional>
       <Ref target="args-name"/>
