@@ -2,6 +2,7 @@
 <parsers>
 
   <Or name="literal">
+    <Ref target="floating-literal"/>
     <Ref target="integer-literal"/>
     <Ref target="pointer-literal"/>
   </Or>
@@ -21,6 +22,30 @@
   <Regex name="hexadecimal-literal"
 	 >0[xX][0-9a-fA-F]*</Regex>
 
+  <And name="floating-literal">
+    <Or>
+      <And>
+	<!-- fractional-constant -->
+	<Regex>([0-9]*\.[0-9]+)|([0-9]+\.)</Regex>
+	<Optional>
+	  <Ref target="exponent-part"/>
+	</Optional>
+      </And>
+      <And>
+	<!-- digit-sequence -->
+	<Regex>[0-9]+</Regex>
+	<Ref target="exponent-part"/>
+      </And>
+    </Or>
+    <!-- floating-suffix -->
+    <Optional>
+      <Regex>[fFlL]</Regex>
+    </Optional>
+  </And>
+
+  <Regex name="exponent-part"
+	 >[eE][+-]?[0-9]+</Regex>
+  
   <Or name="pointer-literal">
     <Literal>nullptr</Literal>
   </Or>
