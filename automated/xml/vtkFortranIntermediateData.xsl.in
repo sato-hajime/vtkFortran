@@ -90,13 +90,18 @@
   </xsl:function>
 
   <xsl:template match="//compound[@kind='class' and vtkf:isWrappableCompound(.)]">
+
+    <xsl:variable name="className" as="xs:string">
+      <xsl:value-of select="name"/>
+    </xsl:variable>
+    
     <xsl:message>
       <xsl:value-of select="@kind"/>
       <xsl:for-each select="(1 to 8 - string-length(@kind))">
 	<xsl:text> </xsl:text>
       </xsl:for-each>
       <xsl:text>: </xsl:text>
-      <xsl:value-of select="name"/>
+      <xsl:value-of select="$className"/>
     </xsl:message>
     
     <xsl:variable name="doxygen" as="document-node()">
@@ -104,10 +109,14 @@
     </xsl:variable>
     
     <class>
-      <xsl:attribute name="name" select="name"/>
+      <xsl:attribute name="name" select="$className"/>
       
       <xsl:for-each select="$doxygen//memberdef[@kind='function' and @prot='public']">
 
+	<xsl:variable name="memberName" as="xs:string">
+	  <xsl:value-of select="name"/>
+	</xsl:variable>
+	
 	<xsl:variable name="arg-toks">
 	  <xsl:sequence select="parser:argsstring(argsstring)"/>
 	</xsl:variable>
@@ -120,6 +129,12 @@
 	  </xsl:message>
 	</xsl:if>
 
+	<xsl:message>
+	  <xsl:text>parse type '</xsl:text>
+	  <xsl:value-of select="type"/>
+	  <xsl:text>'</xsl:text>
+	</xsl:message>
+	
 	<xsl:variable name="type-toks">
 	  <xsl:sequence select="parser:type-spec(type)"/>
 	</xsl:variable>
