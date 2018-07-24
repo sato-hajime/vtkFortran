@@ -25,10 +25,13 @@
     </Optional>
   </And>
 
+  <!-- short cut expression parser -->
+  <Ref name="constant-expression" target="primary-expression"/>
+  
   <Or name="template-argument">
-    <!-- <Ref target="constant-expression"/> -->
     <Ref target="type-id"/>
-    <!-- <Ref target="id-expression"/> -->
+    <Ref target="id-expression"/>
+    <Ref target="constant-expression"/>
   </Or>
   
 </parsers>
