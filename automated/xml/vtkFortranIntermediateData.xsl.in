@@ -111,11 +111,7 @@
 	<xsl:variable name="arg-toks">
 	  <xsl:sequence select="parser:argsstring(argsstring)"/>
 	</xsl:variable>
-
-	<xsl:variable name="type-toks">
-	  <xsl:sequence select="parser:type-spec(type)"/>
-	</xsl:variable>
-
+	
 	<xsl:if test="string-length($arg-toks/rest) > 0">
 	  <xsl:message terminate="yes">
 	    <xsl:text>argsstring parse failed "</xsl:text>
@@ -124,10 +120,14 @@
 	  </xsl:message>
 	</xsl:if>
 
+	<xsl:variable name="type-toks">
+	  <xsl:sequence select="parser:type-spec(type)"/>
+	</xsl:variable>
+
 	<xsl:if test="string-length($type-toks/rest) > 0">
 	  <xsl:message terminate="yes">
 	    <xsl:text>type parse failed "</xsl:text>
-	    <xsl:value-of select="argsstring"/>
+	    <xsl:value-of select="type"/>
 	    <xsl:text>"</xsl:text>
 	  </xsl:message>
 	</xsl:if>
