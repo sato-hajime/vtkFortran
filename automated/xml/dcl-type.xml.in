@@ -8,6 +8,9 @@
   
   <Or name="trailing-type-specifier">
     <Ref target="simple-type-specifier"/>
+    <!-- <Ref target="elaborated-type-specifier"/> -->
+    <!-- <Ref target="typename-specifier"/> -->
+    <Ref target="cv-qualifier"/>
   </Or>
   
   <Or name="simple-type-specifier">
