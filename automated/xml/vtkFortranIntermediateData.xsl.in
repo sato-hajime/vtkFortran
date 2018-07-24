@@ -41,10 +41,16 @@
       </xsl:for-each>
     </xsl:sequence>
   </xsl:variable>
+
+  <xsl:function name="parser:argsstring">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:sequence select="parser:argsstring($str, 0)"/>
+  </xsl:function>
   
   <xsl:function name="parser:argsstring">
     <xsl:param name="str" as="xs:string"/>
-    <xsl:sequence select="parser:parse(parser:getParser('argsstring'), $str)"/>
+    <xsl:param name="verbose" as="xs:integer"/>
+    <xsl:sequence select="parser:parse(parser:getParser('argsstring'), $str, $verbose)"/>
   </xsl:function>
 
   <xsl:function name="parser:type-spec">

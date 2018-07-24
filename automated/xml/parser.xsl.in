@@ -5,10 +5,6 @@
 		xmlns:fn ="http://www.w3.org/2005/xpath-functions"
 		xmlns:vtkf  ="https://github.com/sato-hajime/vtkFortran.git"
   		xmlns:parser="https://github.com/sato-hajime/vtkFortran.git/parser">
-
-  <xsl:variable name="parser:NDEBUG" as="xs:boolean">
-    <xsl:value-of select="false()"/>
-  </xsl:variable>
   
   <xsl:function name="parser:getParser">
     <xsl:param name="name" as="xs:string"/>
@@ -30,12 +26,34 @@
     </xsl:choose>
     <xsl:sequence select="$parsers//*[@name=$name]"/>
   </xsl:function>
+
+  <!--
+  definition
+    parser-parse(node parser, xs:string str)
+    parser-parse(node parser, xs:string str, xs:integer verbose)
+
+  arguments
+    node       parser  ... definition of parser (//parsers/*)
+    xs:string  str     ... string to parse
+    xs:integer verbose ... log verbosity defalut is 0 (no log)
+  return
+    <root>
+      <rest/>   ... rest str (not parsed substring of str)
+      <tokens/> ... parsed tokens
+    </root>
+  -->
+  <xsl:function name="parser:parse">
+    <xsl:param name="parserRoot" as="node()"/>
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:sequence select="parser:parse($parserRoot, $str, 0)"/>
+  </xsl:function>
   
   <xsl:function name="parser:parse">
     <xsl:param name="parserRoot" as="node()"/>
     <xsl:param name="str" as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
 
-    <xsl:if test="not($parser:NDEBUG)">
+    <xsl:if test="$verbose > 0">
       <xsl:message>
 	<xsl:text>parse '</xsl:text>
 	<xsl:value-of select="$str"/>
@@ -47,37 +65,37 @@
 	</xsl:if>
       </xsl:message>
     </xsl:if>
-      
+    
     <xsl:choose>
       <xsl:when test="name($parserRoot) = 'Empty'">	
-	<xsl:sequence select="parser:parseEmpty($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseEmpty($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'NoMatch'">	
-	<xsl:sequence select="parser:parseNoMatch($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseNoMatch($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'Literal'">
-	<xsl:sequence select="parser:parseLiteral($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseLiteral($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'Optional'">
-	<xsl:sequence select="parser:parseOptional($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseOptional($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'Regex'">
-	<xsl:sequence select="parser:parseRegex($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseRegex($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'Or'">
-	<xsl:sequence select="parser:parseOr($parserRoot, $str)"/>	
+	<xsl:sequence select="parser:parseOr($parserRoot, $str, $verbose)"/>	
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'And'">
-	<xsl:sequence select="parser:parseAnd($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseAnd($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'ZeroOrMore'">
-	<xsl:sequence select="parser:parseZeroOrMore($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseZeroOrMore($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'Ref'">
-	<xsl:sequence select="parser:parseRef($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseRef($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:when test="name($parserRoot) = 'NotAny'">
-	<xsl:sequence select="parser:parseNotAny($parserRoot, $str)"/>
+	<xsl:sequence select="parser:parseNotAny($parserRoot, $str, $verbose)"/>
       </xsl:when>
       <xsl:otherwise>
 	<xsl:message>
@@ -92,6 +110,7 @@
   <xsl:function name="parser:parseEmpty">
     <xsl:param name="Empty" as="node()"   />
     <xsl:param name="str"   as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
     
     <rest>
       <xsl:value-of select="$str"/>
@@ -112,7 +131,8 @@
   <xsl:function name="parser:parseNoMatch">
     <xsl:param name="NoMatch" as="node()"   />
     <xsl:param name="str"     as="xs:string"/>
-    
+    <xsl:param name="verbose" as="xs:integer"/>
+
     <rest>
       <xsl:value-of select="$str"/>
     </rest>
@@ -132,8 +152,9 @@
   <xsl:function name="parser:parseLiteral">
     <xsl:param name="Literal" as="node()"/>
     <xsl:param name="str"     as="xs:string"/>
-
-    <xsl:if test="not($parser:NDEBUG)">
+    <xsl:param name="verbose" as="xs:integer"/>
+    
+    <xsl:if test="$verbose > 0">
       <xsl:message>
 	<xsl:text>Literal '</xsl:text>
 	<xsl:value-of select="$Literal"/>
@@ -153,7 +174,7 @@
 	</token>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:sequence select="parser:parseNoMatch($Literal, $str)"/>
+	<xsl:sequence select="parser:parseNoMatch($Literal, $str, $verbose)"/>
       </xsl:otherwise>
     </xsl:choose>
     
@@ -162,9 +183,10 @@
   <xsl:function name="parser:parseOptional">
     <xsl:param name="Optional" as="node()"/>
     <xsl:param name="str" as="xs:string"/>
-
+    <xsl:param name="verbose" as="xs:integer"/>
+    
     <xsl:variable name="result">
-      <xsl:sequence select="parser:parse($Optional/*[1], $str)"/>
+      <xsl:sequence select="parser:parse($Optional/*[1], $str, $verbose)"/>
     </xsl:variable>
 
     <rest>
@@ -186,8 +208,9 @@
   <xsl:function name="parser:parseRegex">
     <xsl:param name="Regex" as="node()"/>
     <xsl:param name="str"   as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
 
-    <xsl:if test="not($parser:NDEBUG)">
+    <xsl:if test="$verbose > 0">
       <xsl:message>
 	<xsl:text>Regex '</xsl:text>
 	<xsl:value-of select="$Regex"/>
@@ -220,7 +243,7 @@
 	</token>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:sequence select="parser:parseNoMatch($Regex, $str)"/>
+	<xsl:sequence select="parser:parseNoMatch($Regex, $str, $verbose)"/>
       </xsl:otherwise>
     </xsl:choose>
     
@@ -241,13 +264,14 @@
   <xsl:function name="parser:parseOr">
     <xsl:param name="Or" as="node()"/>
     <xsl:param name="str" as="xs:string"/>
-
+    <xsl:param name="verbose" as="xs:integer"/>
+    
     <xsl:variable name="head-parser">
       <xsl:sequence select="$Or/*[1]"/>
     </xsl:variable>
 
     <xsl:variable name="head-result">
-      <xsl:sequence select="parser:parse($head-parser/*[1],  $str)"/>
+      <xsl:sequence select="parser:parse($head-parser/*[1], $str, $verbose)"/>
     </xsl:variable>
 
     
@@ -284,7 +308,7 @@
 	  <xsl:sequence select="parser:parserList($Or, $Or/*[position() > 1])"/>
 	</xsl:variable>
 	
-	<xsl:sequence select="parser:parse($tail-parser/*[1], $str)"/>
+	<xsl:sequence select="parser:parse($tail-parser/*[1], $str, $verbose)"/>
 	
       </xsl:otherwise>
     </xsl:choose>
@@ -294,21 +318,22 @@
   <xsl:function name="parser:parseAnd">
     <xsl:param name="And" as="node()"/>
     <xsl:param name="str" as="xs:string"/>
-
+    <xsl:param name="verbose" as="xs:integer"/>
+    
     <xsl:variable name="head-parser">
       <xsl:sequence select="$And/*[1]"/>
     </xsl:variable>
     
     <xsl:variable name="head-result">
       <xsl:sequence
-	  select="parser:parse($head-parser/*[1], $str)"/>
+	  select="parser:parse($head-parser/*[1], $str, $verbose)"/>
     </xsl:variable>
 
     <xsl:choose>
       <xsl:when test="$head-result/token/NoMatch">
 	
 	<xsl:sequence
-    	    select="parser:parseNoMatch($And, $str)"/>
+    	    select="parser:parseNoMatch($And, $str, $verbose)"/>
 	
       </xsl:when>
       <xsl:when test="count($And/*) = 1">
@@ -338,13 +363,13 @@
 
 	<xsl:variable name="tail-result">
 	  <xsl:sequence
-	      select="parser:parse($tail-parser/*[1], $head-result/rest)"/>
+	      select="parser:parse($tail-parser/*[1], $head-result/rest, $verbose)"/>
 	</xsl:variable>
 
 	<xsl:choose>
 	  <xsl:when test="$tail-result/token/NoMatch">
 	    <xsl:sequence
-		select="parser:parseNoMatch($And, $str)"/>
+		select="parser:parseNoMatch($And, $str, $verbose)"/>
 	  </xsl:when>
 	  <xsl:otherwise>
 	    <rest>
@@ -376,9 +401,10 @@
   <xsl:function name="parser:parseZeroOrMore">
     <xsl:param name="ZeroOrMore" as="node()"   />
     <xsl:param name="str"        as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
     
     <xsl:variable name="head-result">
-      <xsl:sequence select="parser:parse($ZeroOrMore/*[1], $str)"/>
+      <xsl:sequence select="parser:parse($ZeroOrMore/*[1], $str, $verbose)"/>
     </xsl:variable>
 
     <xsl:choose>
@@ -403,7 +429,7 @@
       <xsl:otherwise>
 	
 	<xsl:variable name="tail-result">
-	  <xsl:sequence select="parser:parse($ZeroOrMore, $head-result/rest)"/>
+	  <xsl:sequence select="parser:parse($ZeroOrMore, $head-result/rest, $verbose)"/>
 	</xsl:variable>
 	
 	<rest>
@@ -431,18 +457,19 @@
   <xsl:function name="parser:parseRef">
     <xsl:param name="Ref" as="node()"   />
     <xsl:param name="str" as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
     
     <xsl:variable name="target"
 		  select="parser:getParser($Ref/@target)"/>
     
     <xsl:variable name="targetResult">
       <xsl:sequence
-	  select="parser:parse($target, $str)"/>
+	  select="parser:parse($target, $str, $verbose)"/>
     </xsl:variable>
 
     <xsl:choose>
       <xsl:when test="$targetResult/token/NoMatch">
-	<xsl:sequence select="parser:parseNoMatch($Ref, $str)"/>
+	<xsl:sequence select="parser:parseNoMatch($Ref, $str, $verbose)"/>
       </xsl:when>
       <xsl:otherwise>
 	
@@ -469,16 +496,17 @@
 
   <xsl:function name="parser:parseNotAny">
     <xsl:param name="NotAny" as="node()"   />
-    <xsl:param name="str"    as="xs:string"/>    
+    <xsl:param name="str"    as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
     
     <xsl:variable name="result">
       <xsl:sequence
-	  select="parser:parse($NotAny/*[1], $str)"/>
+	  select="parser:parse($NotAny/*[1], $str, $verbose)"/>
     </xsl:variable>
     
     <xsl:choose>
       <xsl:when test="not($result/token/NoMatch)">
-	<xsl:sequence select="parser:parseNoMatch($NotAny, $str)"/>
+	<xsl:sequence select="parser:parseNoMatch($NotAny, $str, $verbose)"/>
       </xsl:when>
       <xsl:otherwise>
 	<rest>
