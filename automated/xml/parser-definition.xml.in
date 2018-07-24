@@ -31,12 +31,10 @@
   <And name="argsstring">
     <Ref target="parameters-and-qualifiers"/>
     <Optional>
-      <And>
-	<Literal>=</Literal>
-	<Or>
-	  <Literal>0</Literal>
-	</Or>
-      </And>
+      <Ref target="virt-specifier-seq"/>
+    </Optional>
+    <Optional>
+      <Ref target="pure-specifier"/>
     </Optional>
   </And>
   

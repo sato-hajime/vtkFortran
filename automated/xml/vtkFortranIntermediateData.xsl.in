@@ -18,6 +18,9 @@
       <xsl:for-each select="document('lex.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>
+      <xsl:for-each select="document('class-mem.xml')//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
       <xsl:for-each select="document('expr.xml')//parsers/*">
 	<xsl:copy-of select="."/>
       </xsl:for-each>

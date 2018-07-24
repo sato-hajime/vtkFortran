@@ -15,6 +15,11 @@ configure_file(
   )
 
 configure_file(
+  class-mem.xml.in
+  class-mem.xml
+  )
+
+configure_file(
   expr.xml.in
   expr.xml
   )
@@ -60,6 +65,7 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
   ${CMAKE_CURRENT_BINARY_DIR}/parser-definition.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lex.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/class-mem.xml  
   ${CMAKE_CURRENT_BINARY_DIR}/expr.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl.xml
   ${CMAKE_CURRENT_BINARY_DIR}/dcl-decl.xml

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<parsers>
+
+  <And name="virt-specifier-seq">
+    <Ref target="virt-specifier"/>
+    <ZeroOrMore>
+      <Ref target="virt-specifier"/>
+    </ZeroOrMore>
+  </And>
+  
+  <Or name="virt-specifier">
+    <Literal>override</Literal>
+    <Literal>final</Literal>
+    <Literal>new</Literal>
+  </Or>
+  
+  <And name="pure-specifier">
+    <Literal>=</Literal>
+    <Literal>0</Literal>
+  </And>
+  
+</parsers>
