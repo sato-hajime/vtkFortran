@@ -129,26 +129,26 @@
 	  </xsl:message>
 	</xsl:if>
 	
-	<xsl:variable name="type-toks">
-	  <xsl:sequence select="parser:type-spec(type)"/>
-	</xsl:variable>
-
-	<xsl:if test="string-length($type-toks/rest) > 0">
-	  <xsl:message terminate="yes">
-	    <xsl:text>type parse failed "</xsl:text>
-	    <xsl:value-of select="type"/>
-	    <xsl:text>"</xsl:text>
-	  </xsl:message>
-	</xsl:if>
+	<!-- <xsl:variable name="type-toks"> -->
+	<!--   <xsl:sequence select="parser:type-spec(type)"/> -->
+	<!-- </xsl:variable> -->
+	
+	<!-- <xsl:if test="string-length($type-toks/rest) > 0"> -->
+	<!--   <xsl:message terminate="yes"> -->
+	<!--     <xsl:text>type parse failed "</xsl:text> -->
+	<!--     <xsl:value-of select="argsstring"/> -->
+	<!--     <xsl:text>"</xsl:text> -->
+	<!--   </xsl:message> -->
+	<!-- </xsl:if> -->
 
 	<method>
 	  <xsl:attribute name="name">
 	    <xsl:value-of select="name"/>
 	  </xsl:attribute>
-	  <type>
-	    <xsl:sequence
-		select="vtkf:typeID($type-toks//*[@name='type-spec'])"/>
-	  </type>
+	  <!-- <type> -->
+	  <!--   <xsl:sequence -->
+	  <!-- 	select="vtkf:typeID($type-toks//*[@name='type-spec'])"/> -->
+	  <!-- </type>	  	   -->
 	  
 	  <!-- argument tokens -->
 	  <arguments>
