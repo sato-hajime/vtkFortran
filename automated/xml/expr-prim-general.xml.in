@@ -7,11 +7,24 @@
   </Or>
   
   <Or name="id-expression">
+    <Ref target="qualified-id"/>
     <Ref target="unqualified-id"/>
-    <!-- <Ref target="qualified-id"/> -->
   </Or>
 
   <Ref name="unqualified-id" target="identifier"/>
+
+  <Or name="qualified-id">
+    <And>
+      <Optional>
+	<Literal>::</Literal>
+      </Optional>
+      <Ref target="nested-name-specifier"/>
+      <Optional>
+	<Literal>template</Literal>
+      </Optional>
+      <Ref target="unqualified-id"/>
+    </And>
+  </Or>
   
   <Or name="nested-name-specifier-final">
     <And>
