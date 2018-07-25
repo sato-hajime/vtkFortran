@@ -41,6 +41,11 @@ configure_file(
   vtkFortranIntermediateData.xsl
   )
 
+configure_file(
+  argsstring-test.xsl.in
+  argsstring-test.xsl
+  )
+
 add_custom_command(
   OUTPUT vtkFortranIntermediateData.xml
   COMMAND ${SAXON_XSLT_COMMAND}
@@ -53,6 +58,23 @@ add_custom_command(
   ${CONFIGURED_CPP_PARSER_DEFINITION_XMLS}
   )
 
+add_custom_command(
+  OUTPUT argsstring-test.xml
+  COMMAND ${SAXON_XSLT_COMMAND}
+  -s:index.xml
+  -xsl:argsstring-test.xsl
+  -o:argsstring-test.xml
+  DEPENDS ${VTK_HEADER_INDEX_XML}
+  ${CMAKE_CURRENT_BINARY_DIR}/argsstring-test.xsl
+  ${CMAKE_CURRENT_BINARY_DIR}/parser.xsl
+  ${CONFIGURED_CPP_PARSER_DEFINITION_XMLS}
+  )
+
 add_custom_target(vtkFortranIntermediateData ALL
   DEPENDS vtkFortranIntermediateData.xml
   )
+
+add_custom_target(argsstring-test ALL
+  DEPENDS argsstring-test.xml
+  )
+

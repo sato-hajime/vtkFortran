@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="2.0"
+		xmlns:xsl ="http://www.w3.org/1999/XSL/Transform"
+		xmlns:xs  ="http://www.w3.org/2001/XMLSchema"
+		xmlns:fn  ="http://www.w3.org/2005/xpath-functions"
+		xmlns:parser="https://github.com/sato-hajime/vtkFortran.git/parser"
+		xmlns:vtkf  ="https://github.com/sato-hajime/vtkFortran.git">
+
+  <xsl:output method="xml" indent="yes"/>
+  
+  <xsl:import href="parser.xsl"/>
+  
+  <xsl:variable name="parsers">
+    <xsl:for-each select="tokenize('${CPP_PARSER_DEFINITION_XMLS}', ';')">
+      <xsl:for-each select="document(.)//parsers/*">
+	<xsl:copy-of select="."/>
+      </xsl:for-each>
+    </xsl:for-each>    
+  </xsl:variable>
+
+  <xsl:function name="parser:argsstring">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:sequence select="parser:argsstring($str, 0)"/>
+  </xsl:function>
+
+  <xsl:function name="parser:argsstring">
+    <xsl:param name="str" as="xs:string"/>
+    <xsl:param name="verbose" as="xs:integer"/>
+    <xsl:sequence select="parser:parse(parser:getParser('argsstring'), $str, $verbose)"/>
+  </xsl:function>
+  
+  <xsl:template match="//compound[@kind='class']">
+    
+    <xsl:variable name="className" as="xs:string">
+      <xsl:value-of select="name"/>
+    </xsl:variable>
+    
+    <xsl:variable name="doxygen" as="document-node()">
+      <xsl:sequence select="document(concat(@refid, '.xml'))"/>
+    </xsl:variable>
+    
+    <xsl:for-each select="$doxygen//memberdef[@kind='function']">
+      
+      <xsl:variable name="memberName" as="xs:string">
+  	<xsl:value-of select="name"/>
+      </xsl:variable>
+      
+      <xsl:variable name="arg-toks">
+  	<xsl:sequence select="parser:argsstring(argsstring)"/>
+      </xsl:variable>
+
+      <xsl:message>
+	<xsl:value-of select="$className"/>
+	<xsl:text> | </xsl:text>
+	<xsl:value-of select="$memberName"/>
+      </xsl:message>
+      
+      <xsl:if test="string-length($arg-toks/rest) > 0">
+	
+  	<xsl:message>
+  	  <xsl:text>argsstring parse failed </xsl:text>
+  	  <xsl:value-of select="$className"/>
+  	  <xsl:text>'s member </xsl:text>
+  	  <xsl:value-of select="$memberName"/>
+  	</xsl:message>
+	
+  	<xsl:message>
+  	  <xsl:text>parse '</xsl:text>
+  	  <xsl:value-of select="argsstring"/>
+  	  <xsl:text>' verbosely</xsl:text>
+  	</xsl:message>
+	
+  	<xsl:variable name="arg-toks-verbose">
+  	  <xsl:sequence select="parser:argsstring(argsstring, 1)"/>
+  	</xsl:variable>
+	
+  	<xsl:if test="$arg-toks-verbose/token">
+  	  <xsl:message></xsl:message>
+  	</xsl:if>
+	
+  	<xsl:message terminate="yes">stop processing</xsl:message>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>  
+  
+</xsl:stylesheet>
