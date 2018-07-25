@@ -34,7 +34,13 @@
       <Ref target="virt-specifier-seq"/>
     </Optional>
     <Optional>
-      <Ref target="pure-specifier"/>
+      <Or>
+	<Ref target="pure-specifier"/>
+	<And>
+	  <Literal>=</Literal>
+	  <Literal>delete</Literal>
+	</And>
+      </Or>
     </Optional>
   </And>
   
